@@ -1,0 +1,107 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Sora", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+
+  /* Flat, light SaaS surface — the app itself sits in a white "frame" on a soft grey page */
+  --color-bg-app: #eef0f2;
+  --color-bg-surface: #ffffff;
+  --color-bg-sidebar: #ffffff;
+  --color-text-primary: #14181f;
+  --color-text-secondary: #667085;
+  --color-text-on-sidebar: #e9e7e1;
+  --color-border: #e7e9ed;
+
+  --color-accent-primary: #2f6b4f;
+  --color-accent-primary-hover: #255740;
+  --color-accent-soft: #e6f3ec;
+  --color-accent-muted: #b3781f;
+  --color-status-success: #157a4a;
+  --color-status-error: #c0362c;
+
+  /* Gradient stops — spent in exactly two places: sidebar wash and primary CTAs */
+  --gradient-forest-from: #1c3327;
+  --gradient-forest-to: #0e1712;
+  --gradient-accent-from: #3c5c47;
+  --gradient-accent-to: #23392b;
+
+  --shadow-glass: 0 1px 1px rgba(28, 27, 24, 0.04), 0 8px 24px -8px rgba(28, 27, 24, 0.12);
+  --shadow-raised: 0 1px 2px rgba(28, 27, 24, 0.06), 0 12px 32px -12px rgba(28, 27, 24, 0.18);
+  --shadow-neu: 4px 4px 10px rgba(28, 27, 24, 0.06), -4px -4px 10px rgba(255, 255, 255, 0.7);
+  --shadow-neu-inset: inset 2px 2px 5px rgba(28, 27, 24, 0.07), inset -2px -2px 5px rgba(255, 255, 255, 0.7);
+
+  /* Flat card system for the logged-in app */
+  --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --shadow-dropdown: 0 4px 6px -2px rgba(16, 24, 40, 0.05), 0 12px 16px -4px rgba(16, 24, 40, 0.09);
+  --shadow-frame: 0 30px 80px -30px rgba(16, 24, 40, 0.35), 0 2px 6px rgba(16, 24, 40, 0.06);
+}
+
+body {
+  background: var(--color-bg-app);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+table {
+  font-variant-numeric: tabular-nums;
+}
+
+.glass-panel {
+  background: color-mix(in oklab, var(--color-bg-surface) 72%, transparent);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid color-mix(in oklab, white 60%, var(--color-border));
+}
+
+.glass-dark {
+  background: linear-gradient(165deg, var(--gradient-forest-from), var(--gradient-forest-to));
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.flat-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-in {
+  animation: toast-in 180ms ease-out;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--color-border) 50%, transparent) 25%,
+    color-mix(in oklab, var(--color-border) 90%, transparent) 37%,
+    color-mix(in oklab, var(--color-border) 50%, transparent) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
