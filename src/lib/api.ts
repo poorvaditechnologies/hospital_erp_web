@@ -17,6 +17,22 @@ export class ApiRequestError extends Error {
   }
 }
 
+async function parseResponse<T>(res: Response): Promise<T> {
+  if (res.status === 204) return undefined as T;
+
+  const body = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new ApiRequestError(
+      body?.error?.code ?? "UNKNOWN_ERROR",
+      body?.error?.message ?? "Something went wrong",
+      res.status,
+    );
+  }
+
+  return body as T;
+}
+
 async function request<T>(path: string, options: RequestInit = {}, retry = true): Promise<T> {
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
@@ -33,19 +49,7 @@ async function request<T>(path: string, options: RequestInit = {}, retry = true)
     if (refreshed) return request<T>(path, options, false);
   }
 
-  if (res.status === 204) return undefined as T;
-
-  const body = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new ApiRequestError(
-      body?.error?.code ?? "UNKNOWN_ERROR",
-      body?.error?.message ?? "Something went wrong",
-      res.status,
-    );
-  }
-
-  return body as T;
+  return parseResponse<T>(res);
 }
 
 async function tryRefresh(): Promise<boolean> {
@@ -86,4 +90,17 @@ export const api = {
   patch: <T>(path: string, data?: unknown) =>
     request<T>(path, { method: "PATCH", body: data ? JSON.stringify(data) : undefined }),
   delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
+  // The backend requires multipart/form-data on every write route (see server/CLAUDE.md),
+  // so form-backed submissions (e.g. login) go through this instead of the JSON `post` above.
+  postForm: async <T>(path: string, data: Record<string, string>): Promise<T> => {
+    const form = new FormData();
+    for (const [key, value] of Object.entries(data)) form.append(key, value);
+    const res = await fetch(`${API_BASE_URL}${path}`, {
+      method: "POST",
+      credentials: "include",
+      headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined,
+      body: form,
+    });
+    return parseResponse<T>(res);
+  },
 };
