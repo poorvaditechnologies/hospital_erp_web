@@ -1,136 +1,31 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useAuth } from "@/lib/auth-context";
-import { ApiRequestError } from "@/lib/api";
+import { Header } from "./Header";
+import { LoginForm } from "./LoginForm";
+import { PartitionInfo } from "./PartitionInfo";
+import { Footer } from "./Footer";
 
 export function Login() {
-  const { login } = useAuth();
-  const navigate = useNavigate();
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setIsSubmitting(true);
-    try {
-      await login(phone, password);
-      navigate("/");
-    } catch (err) {
-      setError(err instanceof ApiRequestError ? err.message : "Could not sign in — try again");
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
-
   return (
-    <div className="flex min-h-screen">
-      {/* Brand panel */}
-      <div className="glass-dark relative hidden w-[46%] shrink-0 flex-col justify-between overflow-hidden p-12 text-text-on-sidebar lg:flex">
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(560px 420px at 15% 10%, color-mix(in oklab, var(--gradient-accent-from) 55%, transparent), transparent 65%), radial-gradient(480px 420px at 100% 100%, color-mix(in oklab, var(--color-accent-muted) 30%, transparent), transparent 70%)",
-          }}
-        />
+    <div className="flex min-h-screen flex-col bg-auth-outer">
+      {/* Full-width status bar */}
+      <Header />
 
-        <BotanicalMark className="pointer-events-none absolute -bottom-20 -right-16 h-96 w-96 text-white/[0.06]" />
-
-        <div className="relative flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10 font-display text-base font-bold">
-            J
-          </div>
-          <span className="font-display text-[15px] font-semibold tracking-tight">
-            Clinic Manager
-          </span>
-        </div>
-
-        <div className="relative">
-          <BotanicalMark className="mb-8 h-12 w-12 text-accent-muted/80" />
-          <h1 className="font-display text-4xl font-bold leading-[1.15] tracking-tight">
-            Jataveda
-            <br />
-            Ayurvedic Clinic
-          </h1>
-          <p className="mt-4 max-w-xs text-[15px] leading-relaxed text-text-on-sidebar/65">
-            Swarna Prashana schedules, patient histories, and kit orders — one system for the whole
-            front desk.
+      {/* Login content centers in the space between the status bar and the footer */}
+      <main className="flex flex-1 flex-col items-center justify-center px-4 py-9 sm:px-8 sm:py-12">
+        {/* Centered clinic branding */}
+        <div className="flex flex-col items-center text-center">
+          <BotanicalMark className="h-10 w-10 text-auth-primary" />
+          <p className="mt-3 font-display text-lg font-semibold text-text-primary">
+            Jataveda Ayurvedic Clinic
           </p>
+          <p className="mt-1 text-xs text-text-secondary">Clinical management platform</p>
         </div>
 
-        <p className="relative text-[12px] text-text-on-sidebar/40">
-          © {new Date().getFullYear()} Jataveda Ayurvedic Clinic · Staff access only
-        </p>
-      </div>
+        <LoginForm />
+        <PartitionInfo />
+      </main>
 
-      {/* Form panel */}
-      <div className="relative flex flex-1 items-center justify-center bg-bg-app px-6 py-12">
-        <div
-          className="pointer-events-none absolute inset-0 lg:hidden"
-          style={{
-            background:
-              "radial-gradient(700px 460px at 10% -10%, color-mix(in oklab, var(--gradient-accent-from) 14%, transparent), transparent 60%)",
-          }}
-        />
-
-        <div className="relative w-full max-w-sm">
-          <div className="mb-8 lg:hidden">
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-[linear-gradient(155deg,var(--gradient-accent-from),var(--gradient-accent-to))] font-display text-base font-bold text-white shadow-[var(--shadow-neu)]">
-              J
-            </div>
-            <h1 className="font-display text-xl font-bold text-text-primary">
-              Jataveda Ayurvedic Clinic
-            </h1>
-          </div>
-
-          <h2 className="font-display text-2xl font-bold text-text-primary">Welcome back</h2>
-          <p className="mt-1.5 text-[13px] text-text-secondary">Sign in with your staff account.</p>
-
-          <form onSubmit={handleSubmit} className="mt-7 space-y-4">
-            <div>
-              <Label htmlFor="phone">Phone number</Label>
-              <Input
-                id="phone"
-                className="mt-1.5"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="9999999999"
-                autoFocus
-              />
-            </div>
-            <div>
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                className="mt-1.5"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-
-            {error && (
-              <p className="rounded-lg bg-status-error/10 px-3 py-2 text-[13px] text-status-error">
-                {error}
-              </p>
-            )}
-
-            <Button type="submit" className="w-full" size="lg" disabled={isSubmitting}>
-              {isSubmitting ? "Signing in…" : "Sign in"}
-            </Button>
-          </form>
-
-          <p className="mt-6 text-[12px] text-text-secondary">
-            Lost your password? Ask a clinic admin to reset it from Staff settings.
-          </p>
-        </div>
-      </div>
+      {/* Footer stays at the bottom of the viewport when content is short */}
+      <Footer />
     </div>
   );
 }
