@@ -21,6 +21,13 @@
   --color-status-success: #157a4a;
   --color-status-error: #c0362c;
 
+  /* Clinic staff login — dark shell + clinical green from the Figma reference */
+  --color-auth-outer: #ffffff;
+  --color-auth-surface: #f4f3ef;
+  --color-auth-primary: #2a4736;
+  --color-auth-primary-hover: #1e3427;
+  --color-auth-border: #e4e1da;
+
   /* Gradient stops — spent in exactly two places: sidebar wash and primary CTAs */
   --gradient-forest-from: #1c3327;
   --gradient-forest-to: #0e1712;
